@@ -1,0 +1,26 @@
+{
+    "builders": [{
+        "type": "docker",
+        "image": "debian:jessie-slim",
+        "commit": true,
+        "changes": [
+            "VOLUME /data",
+            "WORKDIR /data",
+            "EXPOSE 6379",
+            "ENTRYPOINT [\"docker-entrypoint.sh\"]",
+            "CMD [\"redis-server\"]"
+        ]
+    }],
+
+    "provisioners": [{
+        "type": "ansible",
+        "user": "root",
+        "playbook_file": "provision.yml"
+    }],
+
+    "post-processors": [[ {
+        "type": "docker-tag",
+        "repository": "docker.io/alexdzyoba/redis-packer",
+        "tag": "latest"
+    } ]]
+}
