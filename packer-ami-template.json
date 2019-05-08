@@ -1,15 +1,16 @@
 {
-    "description": "Amazon Linux 2 {{ user `image_type`}} AMI",
-    "variables" : {
-      "device_name": "/dev/xvda",
-      "disk_size": "8",
-      "volume_type": "gp2",
-      "region": "ap-south-1",
-      "instance_profile": "packer_profile",
-      "image_type": "test"
-    },
+  "description": "Amazon Linux 2 {{ user `image_type`}} AMI",
+  "variables" : {
+    "device_name": "/dev/xvda",
+    "disk_size": "8",
+    "volume_type": "gp2",
+    "region": "ap-south-1",
+    "instance_profile": "packer_profile",
+    "image_type": "test"
+  },
 
-    "builders": [{
+  "builders": [
+    {
       "type": "amazon-ebs",
       "ami_block_device_mappings": [
         {
@@ -43,5 +44,17 @@
       "instance_type": "t2.micro",
       "ssh_username": "ec2-user",
       "ami_name": "amzn-linux-2-base"
-    }]
-  }
+      }
+   ],
+
+  "provisioners": [
+    {
+      "type": "ansible",
+      "playbook_file": "{{user `ansible_playbook_file`}}",
+      "user": "ec2-user",
+      "extra_arguments": [
+        "-v"
+      ]
+    }
+  ]
+}
