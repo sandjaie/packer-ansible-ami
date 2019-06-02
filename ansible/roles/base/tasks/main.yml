@@ -1,0 +1,13 @@
+---
+
+- name: Installing Packages
+  apt:
+    update_cache: yes
+    name: "{{ packages }}"
+    state: present
+  vars:
+    packages:
+    - build-essential
+    - git
+    - mcrypt
+    - curl
