@@ -1,0 +1,60 @@
+---
+
+- name: Add key
+  apt_key:
+    keyserver: "{{ mongodb_key_server }}"
+    id: "{{ mongodb_key_id }}"
+    state: present
+
+- name: Add repository
+  apt_repository:
+    filename: '/etc/apt/sources.list.d/mongodb-org-{{ mongodb_version }}'
+    repo: 'deb https://repo.mongodb.org/apt/ubuntu {{ ansible_distribution_release }}/mongodb-org/{{ mongodb_version }} multiverse'
+    state: present
+    update_cache: yes
+
+- name: Install mongodb
+  apt:
+    name: mongodb-org
+    state: present
+    update_cache: yes
+
+- name: create mongodb data directory
+  file:
+    path: "{{ mongodb_db_path }}"
+    state: directory
+    mode: 0755
+    owner: mongodb
+    group: mongodb
+
+- name: Copy mongodb config
+  template:
+    src: "mongod.conf.j2"
+    dest: "/etc/mongod.conf"
+  notify: restart mongodb
+
+- name: copy mongodb service
+  copy:
+    src: "mongodb.service"
+    dest: "/lib/systemd/system/mongodb.service"
+
+- name: enable mongodb service
+  systemd:
+    name: "mongodb.service"
+    enabled: "yes"
+    masked: "no"
+  notify: restart mongodb
+
+- name: Start mongodb service
+  service:
+    name: mongod
+    state: started
+
+- name: create admin user - root
+  mongodb_user:
+    database: admin
+    name: "{{ mongodb_admin_user }}"
+    password: "{{ mongodb_admin_password }}"
+    roles: "{{mongodb_admin_role}}"
+    login_port: "{{mongodb_port}}"
+

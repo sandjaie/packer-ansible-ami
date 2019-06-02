@@ -1,0 +1,6 @@
+---
+# handlers for mongodb
+- name: restart mongodb
+  service:
+    name: mongodb
+    state: restarted
