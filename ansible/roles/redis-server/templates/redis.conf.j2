@@ -1,0 +1,19 @@
+{% if include_redis_default_conf %}
+include {{ redis_install_path }}/redis.conf
+{% endif %}
+
+
+{% if redis_confs %}
+{% for key,value in redis_confs.items() %}
+{{ key }} {{ value }}
+{% endfor %}
+{% endif %}
+
+{% if redis_save %}
+{% for save in redis_save %}
+save {{ save }}
+{% endfor %}
+{% endif %}
+
+
+dir {{ redis_conf_path }}

@@ -1,0 +1,73 @@
+---
+
+- name: Create redis group
+  group:
+    name: "{{ redis_group }}"
+    state: present
+
+- name: Create redis user
+  user:
+    name: "{{ redis_user }}"
+    group: "{{ redis_group }}"
+  when: not redis_is_installed
+
+- name: create redis install directory
+  file:
+    path: "{{ redis_install_path }}"
+    state: directory
+
+- name: create /etc/redis
+  file:
+    path: "{{ redis_conf_path }}"
+    state: directory
+
+- name: create /var/run/redis
+  file:
+    path: /var/run/redis
+    state: directory
+    owner: "{{ redis_user }}"
+
+- name: create /var/log/redis
+  file:
+    path: /var/log/redis
+    state: directory
+    mode: 0775
+    owner: "{{ redis_user }}"
+    group: "{{ redis_group }}"
+    
+
+- name: Install required libs
+  apt:
+    name: "{{ redis_required_libs }}"
+    update_cache: yes
+
+- name: Download sources
+  get_url:
+    url: "{{ redis_source_url }}"
+    dest: /tmp
+    validate_certs: no
+
+- name: Extract sources
+  unarchive:
+    copy: no
+    src: /tmp/redis-{{ redis_version }}.tar.gz
+    dest: /tmp
+
+- name: Move sources to install path
+  command: "mv /tmp/redis-{{ redis_version }}/ {{ redis_install_path }}"
+  when: not redis_is_installed or redis_install_new_version
+
+- name: Make
+  make:
+    chdir: "{{ redis_install_path }}"
+
+- name: Make test
+  make:
+    chdir: "{{ redis_install_path }}"
+    target: test
+
+- name: Make install
+  make:
+    chdir: "{{ redis_install_path }}"
+    target: install
+  become: yes
