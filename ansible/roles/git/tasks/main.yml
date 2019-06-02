@@ -1,8 +1,7 @@
 ---
 
 - name: Installing Packages
-  apt:
-    update_cache: yes
+  yum:
     name: "{{ packages }}"
     state: present
     
