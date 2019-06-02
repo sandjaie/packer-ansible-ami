@@ -7,9 +7,6 @@ How to install packages in the image?
     
 Add the packages need to be installed under ansible roles and add the roles in site.yml and under `role_paths` in template.json
 
-How to deploy the created image?
-
-`make terraform
 
 Note: 
 
