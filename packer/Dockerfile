@@ -1,7 +1,5 @@
 FROM amazonlinux:2
 
-ARG packer_template=packer-ami-template.json
-
 # Install Python and Ansible
 ENV ANSIBLE_VERSION=2.7.10
 LABEL ansible_version=${ANSIBLE_VERSION}
@@ -21,8 +19,10 @@ RUN unzip packer_${PACKER_VERSION}_linux_amd64.zip -d /usr/local/bin
 
 RUN rm -rf packer_${PACKER_VERSION}_linux_amd64.zip
 
-COPY $packer_template /usr/local/share/packer/packer-template.json
 
-VOLUME /opt
-WORKDIR /opt
+# ENV PACKER_TEMPLATE=template-docker.json
+# COPY $PACKER_TEMPLATE /usr/local/share/packer/template-docker.json
+
+# VOLUME /opt
+# WORKDIR /usr/local/share/packer/
 

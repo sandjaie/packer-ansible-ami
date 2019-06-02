@@ -1,8 +1,7 @@
 ---
-- name: Install Git, nginx, nodejs
+- name: Install Nodejs
   hosts: all
+  become: yes
 
   roles:
-    - git
-    - nginx
     - nodejs
