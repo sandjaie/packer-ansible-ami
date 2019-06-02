@@ -1,2 +1,3 @@
 ---
 # defaults file for nodejs
+nodejs_version: "8.x"
